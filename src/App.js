@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import { sendMessage } from './api';
+import { sendMessage, connectToSocket } from './api';
 import './App.css';
-
-import openSocket from 'socket.io-client';
-const  socket = openSocket('http://localhost:8000');
 
 class App extends Component {
     constructor(props) {
@@ -16,7 +13,7 @@ class App extends Component {
     }
 
     componentDidMount(){
-        socket.on('chat message', message => {
+        connectToSocket('chat message', message => {
             let chatMessage = this.state.chatMessage;
             chatMessage.push(message);
             this.setState({chatMessage})})
