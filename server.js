@@ -1,17 +1,26 @@
-const io = require('socket.io')();
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-io.on('connection', (client) => {
-    // here you can start emitting events to the client
-    client.on('subscribeToTimer', (interval) => {
-        console.log('client is subscribing to timer with interval ', interval);
-        setInterval(() => {
-            client.emit('timer', new Date());
-        }, interval);
+// app.get('/', (req, res) => {
+//     res.sendFile(__dirname + '/public/index.html');
+    res.send('<h1>Hello world</h1>');
+// });
+
+io.on('connection', (socket) => {
+    socket.broadcast.emit('hi');
+});
+
+io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+        io.emit('chat message', msg);
+        console.log('chat message event: ' + msg);
     });
 });
 
 const port = 8000;
-io.listen(port);
-console.log('listening on port ', port);
+http.listen(port, function(){
+    console.log('listening on *--:',port);
+});
 
 
